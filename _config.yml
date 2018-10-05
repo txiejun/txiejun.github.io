@@ -79,4 +79,4 @@ theme: next
 deploy:
   type: git
   branch: master
-  repo: git@github.com:txiejun/txiejun.git
+  repo: git@github.com:txiejun/txiejun.github.io.git
