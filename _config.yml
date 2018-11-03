@@ -5,9 +5,9 @@
 # Site
 title: txiejun的博客
 subtitle:
-description: 大前端、游戏
+description: 关注大前端，游戏研发
 author: txiejun
-language:
+language: zh-Hans
 timezone:
 
 # URL
@@ -72,7 +72,7 @@ pagination_dir: page
 # Extensions
 ## Plugins: https://hexo.io/plugins/
 ## Themes: https://hexo.io/themes/
-theme: next
+theme: next-5.1.4
 
 # Deployment
 ## Docs: https://hexo.io/docs/deployment.html
