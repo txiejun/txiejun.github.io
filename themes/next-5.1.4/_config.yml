@@ -45,7 +45,7 @@ rss:
 footer:
   # Specify the date when the site was setup.
   # If not defined, current year will be used.
-  #since: 2015
+  since: 2018
 
   # Icon between year and copyright info.
   icon: user
@@ -129,6 +129,7 @@ scheme: Pisces
 social:
   GitHub: https://github.com/txiejun || github
   E-Mail: mailto:txiejun@126.com || envelope
+  CSDN: https://me.csdn.net/txiejun || skype
 #  Google: https://plus.google.com/yourname || google
 #  Twitter: https://twitter.com/yourname || twitter
 #  FB Page: https://www.facebook.com/yourname || facebook
@@ -243,8 +244,8 @@ post_wordcount:
 
 # Reward
 #reward_comment: Donate comment here
-#wechatpay: /images/wechatpay.jpg
-#alipay: /images/alipay.jpg
+#wechatpay: /images/wechatpay.png
+#alipay: /images/alipay.jpeg
 #bitcoin: /images/bitcoin.png
 
 # Declare license on posts
@@ -695,7 +696,7 @@ pace: false
 pace_theme: pace-theme-minimal
 
 # Canvas-nest
-canvas_nest: false
+canvas_nest: true
 
 # three_waves
 three_waves: false
