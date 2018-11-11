@@ -1,5 +1,5 @@
 ---
-title: About Me
+title: About
 date: 2018-11-11 11:33:35
 comments: false
 ---
