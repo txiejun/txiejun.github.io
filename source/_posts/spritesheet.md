@@ -23,7 +23,7 @@ categories: web
  ![Photoshop图标排列](https://raw.githubusercontent.com/txiejun/SpriteSheetDemo/master/docs/img_ps_1.png)
  
  那么通过css样式定位的时候的坐标系是:外层块元素的左上角为（0，0）点，向右是x轴正向，向下是y轴正向。由于`background-position` 的作用是设置背景图像的起始位置，默认起始坐标是（0，0），如果想要只显示图中从左边起第二个绿色的图标，那么我们需要把整个背景图片向左偏移60像素，并设置整个块元素的尺寸为绿色图标大小,关键样式如下：
- ```
+ ```css
  background-image: url("icons.png");
  background-position: -60px 0px;
  width:50px;
@@ -47,7 +47,7 @@ categories: web
  
  对应的样式文件（icons.css)如下：
  
- ```
+ ```css
  .icon1{
      background-image: url("icons.png");
      background-position: 0px 0px;
@@ -134,7 +134,7 @@ categories: web
  
  这样我们就非常简单的获得了雪碧图的合图和less配置文件，下面看下导出的icons.less文件长什么样：
  
- ```
+ ```css
  //
  // Created with TexturePacker http://www.codeandweb.com/texturepacker
  //
@@ -162,7 +162,7 @@ categories: web
   3. 进入到`less-mixins`目录，修改其中的`exporter.xml`为如下所示:
   
  
- ```
+ ```xml
  <exporter version="1.0">
      <!-- identifier of the exporter -->
      <name>less-mixins</name>
@@ -220,7 +220,7 @@ categories: web
   4.修改`sprites.less`文件为如下所示：
   
  
- ```
+ ```css
  //
  // Created with TexturePacker, Don't edit this less mixins file.
  // Author: txiejun
@@ -242,7 +242,7 @@ categories: web
  7.选中`LESS-mixins (css)`选项并点击工具栏的`Save`按钮，然后点击工具栏的`Publish`按钮重新发布；
  重新生成的自定义icons.less雪碧图配置文件如下：
  
- ```
+ ```css
  //
  // Created with TexturePacker, Don't edit this less mixins file.
  // Author: txiejun
@@ -267,7 +267,7 @@ categories: web
  
  在`src/style`目录新建样式文件`app-less.less`,具体内容如下：
  
- ```
+ ```less
  /**
  * Author: txiejun
  * Contact:txiejun@126.com
@@ -355,7 +355,7 @@ categories: web
   - 在头部引入雪碧图样式文件`@import "sprite-sheet/icons.less";`
   - 使用一个小图标（如icon_pc),只需要按照如下进行定义（这儿用到了less的混合功能）：
  
- ```
+ ```less
  .icon-pc{
    .d-icons();
    .icons-pc_normal();
@@ -373,7 +373,7 @@ categories: web
  
  在`src`目录下新建app.js文件，相关内容如下：
  
- ```
+ ```js
  /**
   * Author: txiejun
   * Contact:txiejun@126.com
@@ -402,7 +402,7 @@ categories: web
  
  在项目根目录新建`index.html`,相关内容如下：
  
- ```
+ ```html
  <!DOCTYPE html>
  <html lang="en">
  	<head>
