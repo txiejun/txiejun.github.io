@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="Hexo, NexT" />
+  <meta name="keywords" content="linux,mac," />
 
 
 
@@ -79,16 +79,20 @@
 
 
 
-<meta name="description" content="关注大前端，游戏研发">
-<meta property="og:type" content="website">
-<meta property="og:title" content="txiejun的博客">
-<meta property="og:url" content="http://txiejun.github.io/index.html">
+<meta name="description" content="Shell命令是使用Linux或者Mac系统的人经常接触的一种脚本语言。相关教程可以看这里 Linux chown命令和chmod命令网上一张很形象的对比图：  chown：Linux中用来改变某个文件的属主的命令，如漫画中所示，将某个“资源”（门）的访问权限给予别人。 chmod：Linux中用来改变某个文件的访问模式的命令，如漫画中所示，chmod 777 会将“大门”敞开，谁都可以进出了。">
+<meta name="keywords" content="linux,mac">
+<meta property="og:type" content="article">
+<meta property="og:title" content="linux命令笔记">
+<meta property="og:url" content="http://txiejun.github.io/2018/12/28/linuxcmd/index.html">
 <meta property="og:site_name" content="txiejun的博客">
-<meta property="og:description" content="关注大前端，游戏研发">
+<meta property="og:description" content="Shell命令是使用Linux或者Mac系统的人经常接触的一种脚本语言。相关教程可以看这里 Linux chown命令和chmod命令网上一张很形象的对比图：  chown：Linux中用来改变某个文件的属主的命令，如漫画中所示，将某个“资源”（门）的访问权限给予别人。 chmod：Linux中用来改变某个文件的访问模式的命令，如漫画中所示，chmod 777 会将“大门”敞开，谁都可以进出了。">
 <meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://txiejun.github.io/images/linuxcmd/chownVschmod.jpg">
+<meta property="og:updated_time" content="2018-12-28T06:20:40.414Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="txiejun的博客">
-<meta name="twitter:description" content="关注大前端，游戏研发">
+<meta name="twitter:title" content="linux命令笔记">
+<meta name="twitter:description" content="Shell命令是使用Linux或者Mac系统的人经常接触的一种脚本语言。相关教程可以看这里 Linux chown命令和chmod命令网上一张很形象的对比图：  chown：Linux中用来改变某个文件的属主的命令，如漫画中所示，将某个“资源”（门）的访问权限给予别人。 chmod：Linux中用来改变某个文件的访问模式的命令，如漫画中所示，chmod 777 会将“大门”敞开，谁都可以进出了。">
+<meta name="twitter:image" content="http://txiejun.github.io/images/linuxcmd/chownVschmod.jpg">
 
 
 
@@ -118,13 +122,13 @@
 
 
 
-  <link rel="canonical" href="http://txiejun.github.io/"/>
+  <link rel="canonical" href="http://txiejun.github.io/2018/12/28/linuxcmd/"/>
 
 
 
 
 
-  <title>txiejun的博客</title>
+  <title>linux命令笔记 | txiejun的博客</title>
   
 
 
@@ -153,8 +157,7 @@
     
   
 
-  <div class="container sidebar-position-left 
-  page-home">
+  <div class="container sidebar-position-left page-post-detail">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -257,9 +260,9 @@
         <div class="content-wrap">
           <div id="content" class="content">
             
-  <section id="posts" class="posts-expand">
+
+  <div id="posts" class="posts-expand">
     
-      
 
   
 
@@ -289,9 +292,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/12/28/linuxcmd/" itemprop="url">linux命令笔记</a></h1>
+          <h1 class="post-title" itemprop="name headline">linux命令笔记</h1>
         
 
         <div class="post-meta">
@@ -384,22 +385,59 @@
       
 
       
-        
-          
-          Shell命令是使用Linux或者Mac系统的人经常接触的一种脚本语言。相关教程可以看这里
-Linux chown命令和chmod命令网上一张很形象的对比图：
+        <p>Shell命令是使用Linux或者Mac系统的人经常接触的一种脚本语言。相关教程可以<a href="http://www.runoob.com/linux/linux-shell.html" target="_blank" rel="noopener">看这里</a></p>
+<h2 id="Linux-chown命令和chmod命令"><a href="#Linux-chown命令和chmod命令" class="headerlink" title="Linux chown命令和chmod命令"></a>Linux chown命令和chmod命令</h2><p>网上一张很形象的对比图：<br><img src="/images/linuxcmd/chownVschmod.jpg" alt="对比"></p>
+<ul>
+<li>chown：Linux中用来改变某个文件的属主的命令，如漫画中所示，将某个“资源”（门）的访问权限给予别人。</li>
+<li>chmod：Linux中用来改变某个文件的访问模式的命令，如漫画中所示，chmod 777 会将“大门”敞开，谁都可以进出了。</li>
+</ul>
+<h3 id="1、chown命令"><a href="#1、chown命令" class="headerlink" title="1、chown命令"></a>1、chown命令</h3><p>Linux/Unix 是多人多工操作系统，所有的文件皆有拥有者。利用 chown 将指定文件的拥有者改为指定的用户或组，用户可以是用户名或者用户ID；组可以是组名或者组ID；文件是以空格分开的要改变权限的文件列表，支持通配符。<br>使用权限：root<br>语法<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">chown [-cfhvR] [--help] [--version] user[:group] file...</span><br></pre></td></tr></table></figure></p>
+<p>参数：</p>
+<ul>
+<li>user : 新的文件拥有者的使用者 ID</li>
+<li>group : 新的文件拥有者的使用者组(group)</li>
+<li>-c : 显示更改的部分的信息</li>
+<li>-f : 忽略错误信息</li>
+<li>-h :修复符号链接</li>
+<li>-v : 显示详细的处理信息</li>
+<li>-R : 处理指定目录以及其子目录下的所有文件</li>
+<li>–help : 显示辅助说明</li>
+<li>–version : 显示版本</li>
+</ul>
+<p>实例：<br>将文件 file1.txt 的拥有者设为 users 群体的使用者 runoob :<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">chown runoob:users file1.txt</span><br></pre></td></tr></table></figure></p>
+<p>将目前目录下的所有文件与子目录的拥有者皆设为 users 群体的使用者 lamport :<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">chown -R lamport:users *</span><br></pre></td></tr></table></figure></p>
+<p>一般需要加上sudo命令来执行。</p>
+<h3 id="2、chmod命令"><a href="#2、chmod命令" class="headerlink" title="2、chmod命令"></a>2、chmod命令</h3><p>Linux/Unix 的文件调用权限分为三级 : 文件拥有者、群组、其他。利用 chmod 可以藉以控制文件如何被他人所调用。<br>使用权限：所有使用者<br>语法<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">chmod [-cfvR] [--help] [--version] mode file...</span><br></pre></td></tr></table></figure></p>
+<p>参数：</p>
+<ul>
+<li>mode : 权限设定字串，格式如下 :<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[ugoa...][[+-=][rwxX]...][,...]</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>其中：</p>
+<blockquote>
+<pre><code>u 表示该文件的拥有者，g 表示与该文件的拥有者属于同一个群体(group)者，o 表示其他以外的人，a 表示这三者皆是。
++ 表示增加权限、- 表示取消权限、= 表示唯一设定权限。
+r 表示可读取，w 表示可写入，x 表示可执行，X 表示只有当该文件是个子目录或者该文件已经被设定过为可执行。
+</code></pre></blockquote>
+<ul>
+<li>-c : 显示更改的部分的信息</li>
+<li>-f : 忽略错误信息</li>
+<li>-h :修复符号链接</li>
+<li>-v : 显示详细的处理信息</li>
+<li>-R : 处理指定目录以及其子目录下的所有文件</li>
+<li>–help : 显示辅助说明</li>
+<li>–version : 显示版本</li>
+</ul>
+<p>实例：<br>将文件 file1.txt 设为所有人皆可读取 :<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">chmod ugo+r file1.txt</span><br></pre></td></tr></table></figure></p>
+<p>或者<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">chmod a+r file1.txt</span><br></pre></td></tr></table></figure></p>
+<p>将目前目录下的所有文件与子目录皆设为任何人可读取 :<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">chmod -R a+r *</span><br></pre></td></tr></table></figure></p>
+<p>或者<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">chmod <span class="number">777</span> file</span><br></pre></td></tr></table></figure></p>
+<h4 id="注意："><a href="#注意：" class="headerlink" title="注意："></a>注意：</h4><p>chmod也可以用数字来表示权限，语法为：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">chmod abc file</span><br></pre></td></tr></table></figure></p>
+<p>其中a,b,c各为一个数字，分别表示User、Group、及Other的权限。<br>r=4，w=2，x=1<br>若要rwx属性则4+2+1=7；<br>若要rw-属性则4+2=6；<br>若要r-x属性则4+1=5。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">chmod ug=rwx,o=x file</span><br></pre></td></tr></table></figure>
+<p>和<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">chmod <span class="number">771</span> file</span><br></pre></td></tr></table></figure></p>
+<p>效果相同</p>
 
-chown：Linux中用来改变某个文件的属主的命令，如漫画中所示，将某个“资源”（门）的访问权限给予别人。
-chmod：Linux中用来
-          ...
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2018/12/28/linuxcmd/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
       
     </div>
     
@@ -409,361 +447,72 @@ chmod：Linux中用来
     
 
     
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>喜欢你就打赏一下</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechat1.png" alt="txiejun 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/alipay.png" alt="txiejun 支付宝"/>
+        <p>支付宝</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
 
     
 
     <footer class="post-footer">
       
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://txiejun.github.io/2018/12/16/webim/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="txiejun">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/txiejun.png">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="txiejun的博客">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/12/16/webim/" itemprop="url">Web即时通信最佳实践</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-12-16T10:34:42+08:00">
-                2018-12-16
-              </time>
-            
-
-            
-
-            
-          </span>
-
+        <div class="post-tags">
           
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/web/" itemprop="url" rel="index">
-                    <span itemprop="name">web</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
+            <a href="/tags/linux/" rel="tag"># linux</a>
           
-
+            <a href="/tags/mac/" rel="tag"># mac</a>
           
-            
-              <span class="post-comments-count">
-                <span class="post-meta-divider">|</span>
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-comment-o"></i>
-                </span>
-                <a href="/2018/12/16/webim/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count valine-comment-count" data-xid="/2018/12/16/webim/" itemprop="commentCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-          
-             <span id="/2018/12/16/webim/" class="leancloud_visitors" data-flag-title="Web即时通信最佳实践">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数&#58;</span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-
-          
-
         </div>
-      </header>
-    
+      
 
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
+      
       
       
 
       
-        
-          
-          问题传统的浏览器通信方式主要是基于HTTP协议的请求/响应模式。早期必须通过刷新浏览器来更新服务器端的数据，后来出现的Ajax(XMLHttpRequest是核心)技术可以不用刷新浏览器更新服务器端数据。但是这种模式的问题在于，只能通过客户端主动请求，服务器应答来获得数据，而服务器端有数据变化后无法
-          ...
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2018/12/16/webim/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/12/16/webim/" rel="next" title="Web即时通信最佳实践">
+                <i class="fa fa-chevron-left"></i> Web即时通信最佳实践
+              </a>
+            
           </div>
-          <!--/noindex-->
-        
-      
-    </div>
-    
-    
-    
 
-    
+          <span class="post-nav-divider"></span>
 
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://txiejun.github.io/2018/11/25/spritesheet/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="txiejun">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/txiejun.png">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="txiejun的博客">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/11/25/spritesheet/" itemprop="url">雪碧图最佳实践</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
+          <div class="post-nav-prev post-nav-item">
             
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-11-25T21:12:05+08:00">
-                2018-11-25
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/web/" itemprop="url" rel="index">
-                    <span itemprop="name">web</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-              <span class="post-comments-count">
-                <span class="post-meta-divider">|</span>
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-comment-o"></i>
-                </span>
-                <a href="/2018/11/25/spritesheet/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count valine-comment-count" data-xid="/2018/11/25/spritesheet/" itemprop="commentCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-          
-             <span id="/2018/11/25/spritesheet/" class="leancloud_visitors" data-flag-title="雪碧图最佳实践">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数&#58;</span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-
-          
-
+          </div>
         </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
       
 
       
-        
-          
-           对于web开发人员来说，经常会处理网站上的小图标。为了减少请求次数和提高加载速度，把小图标合并成一张大图，然后利用相关技术呈现需要的图标部分。目前市面上最常用的小图标解决方案有以下两种：
-
-图标字体 （svg sprite)
-雪碧图（css sprite）
-图标字体，不作为今天的讨论范围。今天主要
-          ...
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2018/11/25/spritesheet/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
       
     </footer>
   </div>
@@ -773,179 +522,11 @@ chmod：Linux中用来
   </article>
 
 
-    
-      
 
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://txiejun.github.io/2018/11/11/helloworld/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="txiejun">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/txiejun.png">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="txiejun的博客">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/11/11/helloworld/" itemprop="url">Helloworld</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-11-11T19:35:10+08:00">
-                2018-11-11
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/其他/" itemprop="url" rel="index">
-                    <span itemprop="name">其他</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-              <span class="post-comments-count">
-                <span class="post-meta-divider">|</span>
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-comment-o"></i>
-                </span>
-                <a href="/2018/11/11/helloworld/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count valine-comment-count" data-xid="/2018/11/11/helloworld/" itemprop="commentCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-          
-             <span id="/2018/11/11/helloworld/" class="leancloud_visitors" data-flag-title="Helloworld">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数&#58;</span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-          说起博客，其实最早主要是在csdn.net上活跃，中途荒废了一段时间，最近又偶尔有所更新。翻了下csdn.net上第一篇文章《把Qt程序做成dll的方法》是2008年8月份写的，还非常清晰的记得，那是刚毕业的第一家公司工作时做的记录。虽然csdn上写博客基本上能满足要求，但是缺少归属感，偶尔发现一些
-          ...
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2018/11/11/helloworld/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
+    <div class="post-spread">
       
     </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
   </div>
-  
-  
-  
-  </article>
-
-
-    
-  </section>
-
-  
 
 
           </div>
@@ -953,6 +534,13 @@ chmod：Linux中用来
 
 
           
+
+  
+    <div class="comments" id="comments">
+    </div>
+  
+
+
 
         </div>
         
@@ -973,8 +561,17 @@ chmod：Linux中用来
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+      <section class="site-overview-wrap sidebar-panel">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -1060,6 +657,22 @@ chmod：Linux中用来
         </div>
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Linux-chown命令和chmod命令"><span class="nav-number">1.</span> <span class="nav-text">Linux chown命令和chmod命令</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1、chown命令"><span class="nav-number">1.1.</span> <span class="nav-text">1、chown命令</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2、chmod命令"><span class="nav-number">1.2.</span> <span class="nav-text">2、chmod命令</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#注意："><span class="nav-number">1.2.1.</span> <span class="nav-text">注意：</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       
@@ -1203,6 +816,10 @@ chmod：Linux中用来
 
 
   
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
 
   
 
