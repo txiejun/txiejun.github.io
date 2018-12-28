@@ -106,3 +106,5 @@ chmod 771 file
 ```
 效果相同
 
+参考：
+[详细记录 mac 系统下使用 chmod 命令修改文件权限](http://yifeng.studio/2017/10/18/mac-terminals-chmod-command/)
