@@ -15,11 +15,13 @@ categories: linux
 - 静态资源存放根目录：`/export/servers/source`
 - Nginx根目录：`/export/servers/nginx`
 
-## 一、新增静态资源目录
+## 一、登陆服务器
+在终端输入：`ssh root@serverIp`，输入登陆密码。
+## 二、新增静态资源目录
 在静态资源根目录`/export/servers/source`下新建项目文件夹目录：`TestProject/dist/`
-## 二、上传静态资源
+## 三、上传静态资源
 利用FTP工具（如FileZilla）或者其他方式，把本地打包好的静态资源（包括html,js,css,图片等）上传到`/export/servers/source/TestProject/dist/`目录
-## 三、配置Nginx
+## 四、配置Nginx
 `cd /export/servers/nginx/conf/domains/`进入到Nginx的配置目录，打开对应网站域名的配置文件如：`static.yourdomain.com.conf`，添加如下所示的配置项：
 ```js
 server  {
@@ -31,5 +33,5 @@ server  {
 ```
 保存当前配置文件并退出。
 `cd /export/servers/nginx/sbin/`进入到nginx程序目录，执行命令：`./nginx -t`验证配置文件是否正确。如果错误按照提示进行修改。如果正确，执行命令：`./nginx -s reload`重启Nginx服务。
-## 四、访问静态资源
+## 五、访问静态资源
 绑定相关host,打开浏览器，输入`static.yourdomain.com/TestProject/dist/yoursource.js`访问对应的静态资源是否加载成功。如果加载成功，则说明静态资源服务配置成功。
