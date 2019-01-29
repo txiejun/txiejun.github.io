@@ -87,7 +87,7 @@
 <meta property="og:site_name" content="txiejun的博客">
 <meta property="og:description" content="在做web开发的时候，经常会遇到部署静态资源到Linux服务器上。对于不是经常使用Linux系统的人可能有点陌生。下面把在Linux上新增一个web服务的配置过程记录下来，以备不时之需。以下展示的为手动配置基础版本。 前置条件我们假设服务器上所有环境已经配置好：  文件上传Ftp服务 Nginx服务 静态资源存放根目录：/export/servers/source Nginx根目录：/export">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-01-28T05:51:20.502Z">
+<meta property="og:updated_time" content="2019-01-29T07:04:14.525Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Linux上新增web服务配置">
 <meta name="twitter:description" content="在做web开发的时候，经常会遇到部署静态资源到Linux服务器上。对于不是经常使用Linux系统的人可能有点陌生。下面把在Linux上新增一个web服务的配置过程记录下来，以备不时之需。以下展示的为手动配置基础版本。 前置条件我们假设服务器上所有环境已经配置好：  文件上传Ftp服务 Nginx服务 静态资源存放根目录：/export/servers/source Nginx根目录：/export">
@@ -391,11 +391,12 @@
 <li>静态资源存放根目录：<code>/export/servers/source</code></li>
 <li>Nginx根目录：<code>/export/servers/nginx</code></li>
 </ul>
-<h2 id="一、新增静态资源目录"><a href="#一、新增静态资源目录" class="headerlink" title="一、新增静态资源目录"></a>一、新增静态资源目录</h2><p>在静态资源根目录<code>/export/servers/source</code>下新建项目文件夹目录：<code>TestProject/dist/</code></p>
-<h2 id="二、上传静态资源"><a href="#二、上传静态资源" class="headerlink" title="二、上传静态资源"></a>二、上传静态资源</h2><p>利用FTP工具（如FileZilla）或者其他方式，把本地打包好的静态资源（包括html,js,css,图片等）上传到<code>/export/servers/source/TestProject/dist/</code>目录</p>
-<h2 id="三、配置Nginx"><a href="#三、配置Nginx" class="headerlink" title="三、配置Nginx"></a>三、配置Nginx</h2><p><code>cd /export/servers/nginx/conf/domains/</code>进入到Nginx的配置目录，打开对应网站域名的配置文件如：<code>static.yourdomain.com.conf</code>，添加如下所示的配置项：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">server  &#123;</span><br><span class="line">  ...#其他配置代码</span><br><span class="line">   location /testproject/dist/ &#123;</span><br><span class="line">       alias  /<span class="keyword">export</span>/servers/source/TestProject/dist/;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="一、登陆服务器"><a href="#一、登陆服务器" class="headerlink" title="一、登陆服务器"></a>一、登陆服务器</h2><p>在终端输入：<code>ssh root@serverIp</code>，输入登陆密码。</p>
+<h2 id="二、新增静态资源目录"><a href="#二、新增静态资源目录" class="headerlink" title="二、新增静态资源目录"></a>二、新增静态资源目录</h2><p>在静态资源根目录<code>/export/servers/source</code>下新建项目文件夹目录：<code>TestProject/dist/</code></p>
+<h2 id="三、上传静态资源"><a href="#三、上传静态资源" class="headerlink" title="三、上传静态资源"></a>三、上传静态资源</h2><p>利用FTP工具（如FileZilla）或者其他方式，把本地打包好的静态资源（包括html,js,css,图片等）上传到<code>/export/servers/source/TestProject/dist/</code>目录</p>
+<h2 id="四、配置Nginx"><a href="#四、配置Nginx" class="headerlink" title="四、配置Nginx"></a>四、配置Nginx</h2><p><code>cd /export/servers/nginx/conf/domains/</code>进入到Nginx的配置目录，打开对应网站域名的配置文件如：<code>static.yourdomain.com.conf</code>，添加如下所示的配置项：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">server  &#123;</span><br><span class="line">  ...#其他配置代码</span><br><span class="line">   location /testproject/dist/ &#123;</span><br><span class="line">       alias  /<span class="keyword">export</span>/servers/source/TestProject/dist/;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
 <p>保存当前配置文件并退出。<br><code>cd /export/servers/nginx/sbin/</code>进入到nginx程序目录，执行命令：<code>./nginx -t</code>验证配置文件是否正确。如果错误按照提示进行修改。如果正确，执行命令：<code>./nginx -s reload</code>重启Nginx服务。</p>
-<h2 id="四、访问静态资源"><a href="#四、访问静态资源" class="headerlink" title="四、访问静态资源"></a>四、访问静态资源</h2><p>绑定相关host,打开浏览器，输入<code>static.yourdomain.com/TestProject/dist/yoursource.js</code>访问对应的静态资源是否加载成功。如果加载成功，则说明静态资源服务配置成功。</p>
+<h2 id="五、访问静态资源"><a href="#五、访问静态资源" class="headerlink" title="五、访问静态资源"></a>五、访问静态资源</h2><p>绑定相关host,打开浏览器，输入<code>static.yourdomain.com/TestProject/dist/yoursource.js</code>访问对应的静态资源是否加载成功。如果加载成功，则说明静态资源服务配置成功。</p>
 
       
     </div>
@@ -626,7 +627,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#前置条件"><span class="nav-number">1.</span> <span class="nav-text">前置条件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#一、新增静态资源目录"><span class="nav-number">2.</span> <span class="nav-text">一、新增静态资源目录</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二、上传静态资源"><span class="nav-number">3.</span> <span class="nav-text">二、上传静态资源</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#三、配置Nginx"><span class="nav-number">4.</span> <span class="nav-text">三、配置Nginx</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#四、访问静态资源"><span class="nav-number">5.</span> <span class="nav-text">四、访问静态资源</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#前置条件"><span class="nav-number">1.</span> <span class="nav-text">前置条件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#一、登陆服务器"><span class="nav-number">2.</span> <span class="nav-text">一、登陆服务器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二、新增静态资源目录"><span class="nav-number">3.</span> <span class="nav-text">二、新增静态资源目录</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#三、上传静态资源"><span class="nav-number">4.</span> <span class="nav-text">三、上传静态资源</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#四、配置Nginx"><span class="nav-number">5.</span> <span class="nav-text">四、配置Nginx</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#五、访问静态资源"><span class="nav-number">6.</span> <span class="nav-text">五、访问静态资源</span></a></li></ol></div>
             
 
           </div>
