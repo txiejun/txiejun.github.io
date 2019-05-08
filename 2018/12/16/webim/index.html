@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="IM,web,websocket," />
+  <meta name="keywords" content="web,IM,websocket," />
 
 
 
@@ -80,7 +80,7 @@
 
 
 <meta name="description" content="问题传统的浏览器通信方式主要是基于HTTP协议的请求/响应模式。早期必须通过刷新浏览器来更新服务器端的数据，后来出现的Ajax(XMLHttpRequest是核心)技术可以不用刷新浏览器更新服务器端数据。但是这种模式的问题在于，只能通过客户端主动请求，服务器应答来获得数据，而服务器端有数据变化后无法通过推送方式主动告诉客户端数据的变化。但是随着网络的发展和需求的变化，越来越多的应用场景需要浏览器支">
-<meta name="keywords" content="IM,web,websocket">
+<meta name="keywords" content="web,IM,websocket">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Web即时通信最佳实践">
 <meta property="og:url" content="http://txiejun.github.io/2018/12/16/webim/index.html">
@@ -92,7 +92,7 @@
 <meta property="og:image" content="http://txiejun.github.io/images/webim/cometstreaming.png">
 <meta property="og:image" content="http://txiejun.github.io/images/webim/ws.jpg">
 <meta property="og:image" content="http://txiejun.github.io/images/webim/websocket.png">
-<meta property="og:updated_time" content="2018-12-16T04:22:55.959Z">
+<meta property="og:updated_time" content="2019-04-23T13:41:04.546Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Web即时通信最佳实践">
 <meta name="twitter:description" content="问题传统的浏览器通信方式主要是基于HTTP协议的请求/响应模式。早期必须通过刷新浏览器来更新服务器端的数据，后来出现的Ajax(XMLHttpRequest是核心)技术可以不用刷新浏览器更新服务器端数据。但是这种模式的问题在于，只能通过客户端主动请求，服务器应答来获得数据，而服务器端有数据变化后无法通过推送方式主动告诉客户端数据的变化。但是随着网络的发展和需求的变化，越来越多的应用场景需要浏览器支">
@@ -471,7 +471,7 @@
 <li>适用于：考虑更多兼容性，后端可以使用基于socket.io的框架的情景。（常见服务端实现框架有node.js,Netty-socket.io）</li>
 </ul>
 <p>客户端代码示例：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&lt;script src=<span class="string">"/socket.io/socket.io.js"</span>&gt;&lt;/script&gt;</span><br><span class="line">&lt;script&gt;</span><br><span class="line">  <span class="keyword">var</span> socket = io(<span class="string">'http://localhost'</span>);</span><br><span class="line">  socket.on(<span class="string">'news'</span>, <span class="function"><span class="keyword">function</span> (<span class="params">data</span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(data);</span><br><span class="line">    socket.emit(<span class="string">'my other event'</span>, &#123; <span class="attr">my</span>: <span class="string">'data'</span> &#125;);</span><br><span class="line">  &#125;);</span><br><span class="line">&lt;<span class="regexp">/script&gt;</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&lt;script src=<span class="string">"/socket.io/socket.io.js"</span>&gt;<span class="xml"><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span></span><br><span class="line">&lt;script&gt;</span><br><span class="line">  <span class="keyword">var</span> socket = io(<span class="string">'http://localhost'</span>);</span><br><span class="line">  socket.on(<span class="string">'news'</span>, <span class="function"><span class="keyword">function</span> (<span class="params">data</span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(data);</span><br><span class="line">    socket.emit(<span class="string">'my other event'</span>, &#123; <span class="attr">my</span>: <span class="string">'data'</span> &#125;);</span><br><span class="line">  &#125;);</span><br><span class="line">&lt;<span class="regexp">/script&gt;</span></span><br></pre></td></tr></table></figure>
 <p>服务器端示例代码：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> app = <span class="built_in">require</span>(<span class="string">'http'</span>).createServer(handler)</span><br><span class="line"><span class="keyword">var</span> io = <span class="built_in">require</span>(<span class="string">'socket.io'</span>)(app);</span><br><span class="line"><span class="keyword">var</span> fs = <span class="built_in">require</span>(<span class="string">'fs'</span>);</span><br><span class="line"></span><br><span class="line">app.listen(<span class="number">80</span>);</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">handler</span> (<span class="params">req, res</span>) </span>&#123;</span><br><span class="line">  fs.readFile(__dirname + <span class="string">'/index.html'</span>,</span><br><span class="line">  <span class="function"><span class="keyword">function</span> (<span class="params">err, data</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (err) &#123;</span><br><span class="line">      res.writeHead(<span class="number">500</span>);</span><br><span class="line">      <span class="keyword">return</span> res.end(<span class="string">'Error loading index.html'</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    res.writeHead(<span class="number">200</span>);</span><br><span class="line">    res.end(data);</span><br><span class="line">  &#125;);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">io.on(<span class="string">'connection'</span>, <span class="function"><span class="keyword">function</span> (<span class="params">socket</span>) </span>&#123;</span><br><span class="line">  socket.emit(<span class="string">'news'</span>, &#123; <span class="attr">hello</span>: <span class="string">'world'</span> &#125;);</span><br><span class="line">  socket.on(<span class="string">'my other event'</span>, <span class="function"><span class="keyword">function</span> (<span class="params">data</span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(data);</span><br><span class="line">  &#125;);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure></p>
 <h5 id="客户端核心API-1"><a href="#客户端核心API-1" class="headerlink" title="客户端核心API"></a>客户端核心API</h5><p>socket.io所有API详见<a href="https://socket.io/docs/" target="_blank" rel="noopener">这儿</a></p>
 <h6 id="io-connect-建立一个连接"><a href="#io-connect-建立一个连接" class="headerlink" title="io.connect 建立一个连接"></a>io.connect 建立一个连接</h6><p><code>var socket = io.connect(&#39;ws://127.0.0.1:3000&#39;);</code></p>
@@ -534,9 +534,9 @@
       
         <div class="post-tags">
           
-            <a href="/tags/IM/" rel="tag"># IM</a>
-          
             <a href="/tags/web/" rel="tag"># web</a>
+          
+            <a href="/tags/IM/" rel="tag"># IM</a>
           
             <a href="/tags/websocket/" rel="tag"># websocket</a>
           
@@ -647,7 +647,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-count">6</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
