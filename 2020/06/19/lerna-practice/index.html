@@ -1,0 +1,1097 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="web," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="背景我们在开发一个大型项目的时候，通常会遇到如下情况：一个业务工程Project1，会同时依赖于lib1、lib2、lib3，其中lib2又依赖于lib1，lib3又依赖于lib1和lib2这种复杂依赖情况。（lib1,lib2,lib3是自己开发维护的npm包，分别发布到私有服务器，我们称为自研依赖库，以区别第三方依赖库）。   如何组织管理这些依赖包是个问题   方式1： （Multirepo">
+<meta name="keywords" content="web">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Lerna多包管理实践">
+<meta property="og:url" content="http://txiejun.github.io/2020/06/19/lerna-practice/index.html">
+<meta property="og:site_name" content="txiejun的博客">
+<meta property="og:description" content="背景我们在开发一个大型项目的时候，通常会遇到如下情况：一个业务工程Project1，会同时依赖于lib1、lib2、lib3，其中lib2又依赖于lib1，lib3又依赖于lib1和lib2这种复杂依赖情况。（lib1,lib2,lib3是自己开发维护的npm包，分别发布到私有服务器，我们称为自研依赖库，以区别第三方依赖库）。   如何组织管理这些依赖包是个问题   方式1： （Multirepo">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://txiejun.github.io/images/lerna/multiple-projects.png">
+<meta property="og:image" content="http://txiejun.github.io/images/lerna/lerna-dependence.jpg">
+<meta property="og:image" content="http://txiejun.github.io/images/lerna/lerna-dir.jpg">
+<meta property="og:image" content="http://txiejun.github.io/images/lerna/lerna-output.jpg">
+<meta property="og:image" content="http://txiejun.github.io/images/lerna/lerna-publish3.jpg">
+<meta property="og:image" content="http://txiejun.github.io/images/lerna/lerna-publish4.jpg">
+<meta property="og:image" content="http://txiejun.github.io/images/lerna/lerna-publish-ok.jpg">
+<meta property="og:updated_time" content="2020-06-19T02:01:46.499Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Lerna多包管理实践">
+<meta name="twitter:description" content="背景我们在开发一个大型项目的时候，通常会遇到如下情况：一个业务工程Project1，会同时依赖于lib1、lib2、lib3，其中lib2又依赖于lib1，lib3又依赖于lib1和lib2这种复杂依赖情况。（lib1,lib2,lib3是自己开发维护的npm包，分别发布到私有服务器，我们称为自研依赖库，以区别第三方依赖库）。   如何组织管理这些依赖包是个问题   方式1： （Multirepo">
+<meta name="twitter:image" content="http://txiejun.github.io/images/lerna/multiple-projects.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":true,"scrollpercent":true,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://txiejun.github.io/2020/06/19/lerna-practice/"/>
+
+
+
+
+
+  <title>Lerna多包管理实践 | txiejun的博客</title>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?d22700c82bc2d6c457d7aabf68b9723b";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">txiejun的博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://txiejun.github.io/2020/06/19/lerna-practice/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="txiejun">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/txiejun.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="txiejun的博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Lerna多包管理实践</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-06-19T09:57:27+08:00">
+                2020-06-19
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/工程化/" itemprop="url" rel="index">
+                    <span itemprop="name">工程化</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2020/06/19/lerna-practice/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2020/06/19/lerna-practice/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+             <span id="/2020/06/19/lerna-practice/" class="leancloud_visitors" data-flag-title="Lerna多包管理实践">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>我们在开发一个大型项目的时候，通常会遇到如下情况：<br>一个业务工程Project1，会同时依赖于lib1、lib2、lib3，其中lib2又依赖于lib1，lib3又依赖于lib1和lib2这种复杂依赖情况。（lib1,lib2,lib3是自己开发维护的npm包，分别发布到私有服务器，我们称为自研依赖库，以区别第三方依赖库）。<br><img src="/images/lerna/multiple-projects.png" alt="依赖关系">  </p>
+<p><strong>如何组织管理这些依赖包是个问题</strong>  </p>
+<p><strong>方式1：</strong> （Multirepo）多个依赖包独立进行git管理，问题也很明显，就是每个库有改动后，需要发布到线上，然后再去安装才能使用。如果是开发环境下，这个时候需要本地打包这样的操作就更加复杂了，这样如果依赖关系越复杂就越难以维护。</p>
+<p><strong>方式2：</strong> （Monorepo）反过来，如果所有依赖库完全放入一个项目工程的话，又不便于共同代码的复用和分享。</p>
+<h2 id="lerna"><a href="#lerna" class="headerlink" title="lerna"></a>lerna</h2><blockquote>
+<p>用于管理具有多个包的JavaScript项目的工具。</p>
+</blockquote>
+<p>lerna官网：<a href="https://lerna.js.org/" target="_blank" rel="noopener">https://lerna.js.org/</a><br>lerna文档：<a href="https://github.com/lerna/lerna#readme" target="_blank" rel="noopener">https://github.com/lerna/lerna#readme</a>  </p>
+<p>目前使用lerna进行多packages管理的明星仓库有：</p>
+<ul>
+<li><a href="https://github.com/babel/babel" target="_blank" rel="noopener">babel/babel</a></li>
+<li><a href="https://github.com/facebook/create-react-app" target="_blank" rel="noopener">facebook/create-react-app</a></li>
+<li><a href="https://github.com/vuejs/vue-cli" target="_blank" rel="noopener">vuejs/vue-cli</a></li>
+<li><a href="https://github.com/webpack/webpack-cli" target="_blank" rel="noopener">webpack/webpack-cli</a></li>
+</ul>
+<p><strong>lerna管理的库文件结构如下：</strong>  </p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">lerna-usage/</span><br><span class="line">  package.json</span><br><span class="line">  packages/</span><br><span class="line">    package<span class="number">-1</span>/</span><br><span class="line">      package.json</span><br><span class="line">    package<span class="number">-2</span>/</span><br><span class="line">      package.json</span><br></pre></td></tr></table></figure>
+<p>lerna的作用是，把多个项目或者模块拆分为多个packages放入一个git仓库进行管理。  </p>
+<ul>
+<li>通过命令<code>lerna boostrap</code>自动解决packages之间的依赖关系，对于packages内部的依赖会直接采用symlink的方式关联过去。</li>
+<li>通过命令<code>lerna publish</code>依赖<code>git</code>检测文件改动，自动发布，管理版本号。</li>
+<li>根据git 提交记录，自动生成changelog</li>
+</ul>
+<h2 id="管理模式"><a href="#管理模式" class="headerlink" title="管理模式"></a>管理模式</h2><p><code>lerna</code>有两种管理模式，固定模式和独立模式</p>
+<h3 id="固定-锁定模式（默认）"><a href="#固定-锁定模式（默认）" class="headerlink" title="固定/锁定模式（默认）"></a>固定/锁定模式（默认）</h3><p>命令：<code>lerna init</code><br>固定模式通过<code>lerna.json</code>里的版本进行统一的版本管理。这种模式自动将所有packages包版本捆绑在一起，对任何其中一个或者多个packages进行重大改动都会导致所有packages的版本号进行升级。</p>
+<h3 id="独立模式"><a href="#独立模式" class="headerlink" title="独立模式"></a>独立模式</h3><p>命令：<code>lerna init --independent</code>  </p>
+<p>独立模式，init的时候需要设置选项<code>--independent</code>。这种模式允许使用者对每个package单独改变版本号。每次执行<code>lerna publish</code>的时候，针对所有有更新的package，会逐个询问需要升级的版本号，基准版本为它自身的package.json里面的版本号。<br>这种情况下，<code>lerna.json</code>的版本号不会变化， 默认为<code>independent</code>。</p>
+<h2 id="lerna-json"><a href="#lerna-json" class="headerlink" title="lerna.json"></a>lerna.json</h2><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="string">"version"</span>: <span class="string">"1.1.3"</span>,</span><br><span class="line">  <span class="string">"npmClient"</span>: <span class="string">"npm"</span>,</span><br><span class="line">  <span class="string">"command"</span>: &#123;</span><br><span class="line">    <span class="string">"publish"</span>: &#123;</span><br><span class="line">      <span class="string">"ignoreChanges"</span>: [<span class="string">"ignored-file"</span>, <span class="string">"*.md"</span>],</span><br><span class="line">      <span class="string">"message"</span>: <span class="string">"chore(release): publish"</span>,</span><br><span class="line">      <span class="string">"registry"</span>: <span class="string">"https://npm.pkg.github.com"</span></span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="string">"bootstrap"</span>: &#123;</span><br><span class="line">      <span class="string">"ignore"</span>: <span class="string">"component-*"</span>,</span><br><span class="line">      <span class="string">"npmClientArgs"</span>: [<span class="string">"--no-package-lock"</span>]</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="string">"packages"</span>: [<span class="string">"packages/*"</span>]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>参数说明：</p>
+<ul>
+<li><code>version</code> 当前库的版本号，独立模式下，此参数设置为<code>independent</code></li>
+<li><code>npmClient</code> 允许指定命令使用的client， 默认是<code>npm</code>， 可以设置成<code>yarn</code></li>
+<li><code>command.publish.ignoreChanges</code> 可以指定那些目录或者文件的变更不会被publish</li>
+<li><code>command.publish.message</code> 指定发布时提交的消息格式</li>
+<li><code>command.publish.registry</code> 设置npm包发布的注册地址</li>
+<li><code>command.bootstrap.ignore</code> 设置执行<code>lerna bootstrap</code>安装依赖时不受影响的包</li>
+<li><code>command.bootstrap.npmClientArgs</code> 指定在执行<code>lerna bootstrap</code>命令时传递给<code>npm install</code>的参数</li>
+<li><code>command.bootstrap.scope</code> 指定那些包会受 lerna bootstrap 命令影响</li>
+<li><code>packages</code> 指定包所在目录</li>
+</ul>
+<h2 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h2><p>以下假设有三个packages:</p>
+<ul>
+<li>feu-app 模拟业务主项目，不需要发布npm包，依赖于feu-ui和feu-tools</li>
+<li>feu-ui 模拟ui库项目，不需要发布npm包，依赖于feu-tools</li>
+<li>feu-tools 模拟工具共享库，需要发布npm包</li>
+</ul>
+<p>假如相互依赖关系如下：<br><img src="/images/lerna/lerna-dependence.jpg" alt="依赖"></p>
+<h3 id="1、全局安装lerna"><a href="#1、全局安装lerna" class="headerlink" title="1、全局安装lerna"></a>1、全局安装lerna</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ npm install --global lerna</span><br></pre></td></tr></table></figure>
+<h3 id="2、使用git-init初始化一个项目仓库"><a href="#2、使用git-init初始化一个项目仓库" class="headerlink" title="2、使用git init初始化一个项目仓库"></a>2、使用<code>git init</code>初始化一个项目仓库</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git init lerna-usage &amp;&amp; <span class="built_in">cd</span> lerna-usage</span><br></pre></td></tr></table></figure>
+<h3 id="3、执行lerna初始化"><a href="#3、执行lerna初始化" class="headerlink" title="3、执行lerna初始化"></a>3、执行lerna初始化</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ lerna init</span><br></pre></td></tr></table></figure>
+<p>此处用的是默认的固定模式。<br>目前整个文件夹目录像下面这样：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">lerna-usage/</span><br><span class="line">  packages/</span><br><span class="line">  package.json</span><br><span class="line">  lerna.json</span><br></pre></td></tr></table></figure></p>
+<h3 id="4、创建三个新的package-feu-app、feu-ui、feu-tools"><a href="#4、创建三个新的package-feu-app、feu-ui、feu-tools" class="headerlink" title="4、创建三个新的package (feu-app、feu-ui、feu-tools)"></a>4、创建三个新的package (feu-app、feu-ui、feu-tools)</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ lerna create feu-app &amp;&amp; lerna create feu-ui &amp;&amp; lerna create feu-tools</span><br></pre></td></tr></table></figure>
+<p>执行完以上代码整个文档目录结果如下：<br><img src="/images/lerna/lerna-dir.jpg" alt="目录"></p>
+<h3 id="5、添加依赖并编码"><a href="#5、添加依赖并编码" class="headerlink" title="5、添加依赖并编码"></a>5、添加依赖并编码</h3><h4 id="feu-tools"><a href="#feu-tools" class="headerlink" title="feu-tools"></a>feu-tools</h4><p>在<code>packages/feu-tools/lib/tools.js</code>添加代码如下：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">'use strict'</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">add</span>(<span class="params">a, b</span>) </span>&#123;</span><br><span class="line">	<span class="built_in">console</span>.log(<span class="string">"tools库，调用函数add,入参：%d, %d"</span>,a ,b)</span><br><span class="line">    <span class="keyword">return</span> a + b;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">min</span>(<span class="params">a, b</span>) </span>&#123;</span><br><span class="line">	<span class="built_in">console</span>.log(<span class="string">"tools库，调用函数min,入参：%d, %d"</span>,a ,b)</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">Math</span>.min(a, b);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="built_in">module</span>.exports = &#123; add, min &#125;;</span><br></pre></td></tr></table></figure></p>
+<h4 id="feu-ui"><a href="#feu-ui" class="headerlink" title="feu-ui"></a>feu-ui</h4><p><strong>步骤一：</strong><br>为了防止其被发布到npm上，我们在其<code>package.json</code>中设置<code>&quot;private&quot;=true</code>。</p>
+<p><strong>步骤二：</strong><br>添加第三方依赖包”chalk”到<code>feu-ui</code>的开发依赖库中，执行如下命令：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ lerna add chalk --scope=feu-ui --dev</span><br></pre></td></tr></table></figure></p>
+<p><strong>步骤三</strong><br>添加本地包<code>feu-tools</code>到<code>feu-ui</code>的依赖库中，执行如下命令：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ lerna add feu-tools --scope=feu-ui</span><br></pre></td></tr></table></figure></p>
+<blockquote>
+<p>本地包添加的时候，lerna命令会通过symlink的方式关联过去，可以理解为创建了一个快捷方式，这个对本地开发非常有用。</p>
+</blockquote>
+<p><strong>步骤四</strong><br>在<code>packages/feu-ui/lib/ui.js</code>添加代码如下：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">'use strict'</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> chalk = <span class="built_in">require</span>(<span class="string">'chalk'</span>);</span><br><span class="line"><span class="keyword">const</span> &#123; add &#125; = <span class="built_in">require</span>(<span class="string">'feu-tools'</span>);</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">ui</span>(<span class="params">result</span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">"ui库，result入参:"</span>, result);</span><br><span class="line">    <span class="built_in">console</span>.log(chalk.red(<span class="string">"ui库, 结果为："</span>+chalk.blue(add(result, <span class="number">10</span>))));</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="built_in">module</span>.exports = ui;</span><br></pre></td></tr></table></figure></p>
+<h4 id="feu-app"><a href="#feu-app" class="headerlink" title="feu-app"></a>feu-app</h4><p><strong>步骤一</strong><br>为了防止其被发布到npm上，我们在其<code>package.json</code>中设置<code>&quot;private&quot;=true</code>。</p>
+<p><strong>步骤二：</strong><br>添加本地包<code>feu-tools</code>到<code>feu-app</code>的依赖库中，执行如下命令：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ lerna add feu-tools --scope=feu-app</span><br></pre></td></tr></table></figure></p>
+<p><strong>步骤三</strong><br>添加本地包<code>feu-ui</code>到<code>feu-app</code>的依赖库中，执行如下命令：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ lerna add feu-ui --scope=feu-app</span><br></pre></td></tr></table></figure></p>
+<p><strong>步骤四</strong><br>在<code>packages/feu-app/lib/app.js</code>添加代码如下：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">'use strict'</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> &#123; min &#125; = <span class="built_in">require</span>(<span class="string">'feu-tools'</span>);</span><br><span class="line"><span class="keyword">const</span> ui = <span class="built_in">require</span>(<span class="string">"feu-ui"</span>);</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">app</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">"app主入口"</span>);</span><br><span class="line">    <span class="keyword">let</span> minNum = min(<span class="number">2</span>, <span class="number">5</span>);</span><br><span class="line">    ui(minNum);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">app();</span><br></pre></td></tr></table></figure></p>
+<h3 id="6、运行效果"><a href="#6、运行效果" class="headerlink" title="6、运行效果"></a>6、运行效果</h3><p>由于此时已经安装好了所有依赖包，所以不需要执行<code>lerna bootstrap</code>， 如果是新clone的一个已有的lerna工程，可以通过执行<code>lerna bootstrap</code>命令一键安装所有packages的依赖项。<br>此时运行如下命令：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> packages/feu-app &amp;&amp; node lib/app.js</span><br></pre></td></tr></table></figure></p>
+<p>运行结果如下：</p>
+<p><img src="/images/lerna/lerna-output.jpg" alt="output"></p>
+<p>可以看到三个package之间以及第三方依赖库之间的调用已经成功执行。<br>以上流程完整的展示了整个lerna的使用过程，如果没有发布和共享给其他团队使用的需求到此就可以结束了。<br>如果我们还希望可以把<code>feu-tools</code>共享给其他团队和个人使用，那么我们就还需要把这这个包发布成npm包。</p>
+<h2 id="发布到npm"><a href="#发布到npm" class="headerlink" title="发布到npm"></a>发布到npm</h2><h3 id="前置条件"><a href="#前置条件" class="headerlink" title="前置条件"></a>前置条件</h3><ul>
+<li>如果是需要提前编译的项目，你可能需要通过<code>lerna run build</code>执行<code>build</code>命令生成打包。</li>
+<li>发布之前，你需要保证相关代码都已经提交到git。</li>
+<li>通过<code>lerna changed</code>查看有哪些更新的packages。</li>
+<li>需要确保你的npm账号已经是登陆状态，否则可能发布失败。</li>
+<li>保证你对需要发布的npm包具有相关发布权限。</li>
+<li>在<code>lerna.json</code>中设置好正确的npm registry,比如<code>https://registry.npmjs.org/</code>。</li>
+</ul>
+<h3 id="执行发布命令"><a href="#执行发布命令" class="headerlink" title="执行发布命令"></a>执行发布命令</h3><p>当一切准备就绪后，就可以执行以下命令：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ lerna publish</span><br></pre></td></tr></table></figure></p>
+<p>此处根据我们选择的管理模式不同，提示问题可能有所不同。由于我们选择的是固定模式，所有packages的版本号都会根据<code>lerna.json</code>中的版本号进行更新。<br>询问版本号界面如下：<br><img src="/images/lerna/lerna-publish3.jpg" alt="询问版本号"> </p>
+<p>选择了版本号的下一步界面如下：<br><img src="/images/lerna/lerna-publish4.jpg" alt="询问版本下一步"></p>
+<p>我们可以看到三个packages的版本号都统一升级成了<code>0.1.2</code>，而且可以看到<code>feu-app</code>和<code>feu-ui</code>展示为<code>private</code>，说明不会被发布到npm。</p>
+<h3 id="执行结果"><a href="#执行结果" class="headerlink" title="执行结果"></a>执行结果</h3><p><img src="/images/lerna/lerna-publish-ok.jpg" alt="结果"></p>
+<p>可以看到已经提示发布成功。</p>
+<h2 id="常用命令"><a href="#常用命令" class="headerlink" title="常用命令"></a>常用命令</h2><h3 id="lerna-init"><a href="#lerna-init" class="headerlink" title="lerna init"></a>lerna init</h3><p>初始化一个lerna项目<br>固定模式（默认）：<code>lerna init</code><br>独立模式：<code>lerna init ----independent</code>  </p>
+<h3 id="lerna-bootstrap"><a href="#lerna-bootstrap" class="headerlink" title="lerna bootstrap"></a>lerna bootstrap</h3><p>安装所有packages的依赖项并且连接本地包的交叉依赖项。</p>
+<h3 id="lerna-import"><a href="#lerna-import" class="headerlink" title="lerna import"></a>lerna import</h3><p>导入存在的包<br><strong>案例1：</strong>把路径为<code>~/Users/Product</code>的包导入到名为<code>utilites</code>的包里。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ lerna <span class="keyword">import</span> ~<span class="regexp">/Users/</span>Product --dest=utilities</span><br></pre></td></tr></table></figure></p>
+<h3 id="lerna-add"><a href="#lerna-add" class="headerlink" title="lerna add"></a>lerna add</h3><p>将本地或者远程的包作为依赖项添加到当前的packages中，每次只能添加一个包。<br><strong>案例1：</strong> 添加远程依赖包”chalk”到<code>feu-ui</code>的开发依赖库中，执行如下命令：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ lerna add chalk --scope=feu-ui --dev</span><br></pre></td></tr></table></figure></p>
+<p><strong>案例2：</strong> 添加本地包<code>feu-tools</code>到<code>feu-app</code>的依赖库中，执行如下命令：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ lerna add feu-tools --scope=feu-app</span><br></pre></td></tr></table></figure></p>
+<h3 id="lerna-create"><a href="#lerna-create" class="headerlink" title="lerna create"></a>lerna create</h3><p>创建一个lerna管理的package包</p>
+<p><strong>案例1：</strong><br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ lerna create feu-tools</span><br></pre></td></tr></table></figure></p>
+<h3 id="lerna-clean"><a href="#lerna-clean" class="headerlink" title="lerna clean"></a>lerna clean</h3><p>删除所有包下面的<code>node_modules</code>目录，也可以删除指定包下面的<code>node_modules</code>。<br><strong>注意：</strong> 不会删除<code>package.json</code>里面的依赖项定义，也不会删除root目录的<code>node_modules</code>。  </p>
+<p><strong>案例1:</strong> 只删除<code>feu-ui</code>包下面的<code>node_modules</code>目录<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ lerna clean --scope=feu-ui</span><br></pre></td></tr></table></figure></p>
+<h3 id="lerna-ls"><a href="#lerna-ls" class="headerlink" title="lerna ls"></a>lerna ls</h3><p>列出所有公开的包（排除<code>private=true</code>的）</p>
+<h3 id="lerna-changed"><a href="#lerna-changed" class="headerlink" title="lerna changed"></a>lerna changed</h3><p>检查自上次发布以来有哪些包有更新。</p>
+<h3 id="lerna-diff"><a href="#lerna-diff" class="headerlink" title="lerna diff"></a>lerna diff</h3><p>查看自上次发布以来的所有包或者指定包的<code>git diff</code>变化。</p>
+<h3 id="lerna-run"><a href="#lerna-run" class="headerlink" title="lerna run"></a>lerna run</h3><p>在包含该脚本命令的每个package内部执行<code>npm script</code>脚本命令,也可以指定在某个package下执行。  </p>
+<p><strong>案例1：</strong> 在<code>feu-ui</code>包中执行<code>build</code>脚本命令<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ lerna run build --scope=feu-ui</span><br></pre></td></tr></table></figure></p>
+<h3 id="lerna-exec"><a href="#lerna-exec" class="headerlink" title="lerna exec"></a>lerna exec</h3><p>在每个包中执行任意命令，也可以指定在某个package下执行。<br><strong>案例1：</strong><br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ lerna <span class="built_in">exec</span> -- npm view \<span class="variable">$LERNA_PACKAGE_NAME</span></span><br></pre></td></tr></table></figure></p>
+<h3 id="lerna-link"><a href="#lerna-link" class="headerlink" title="lerna link"></a>lerna link</h3><p>将相互依赖的所有包Symlink链接在一起。</p>
+<h3 id="lerna-version"><a href="#lerna-version" class="headerlink" title="lerna version"></a>lerna version</h3><p>版本迭代。<br>执行此命令，做了这几件事：  </p>
+<ul>
+<li>标识自上个标记版本依赖有更新的包。</li>
+<li>提示输入新版本。</li>
+<li>修改包元数据以反映新版本，在根目录和每个包中运行适当的生命周期脚本。</li>
+<li>提交这些改动并标记提交。</li>
+<li>推送到git远端。</li>
+</ul>
+<p><strong>版本更新原则：</strong>  </p>
+<ul>
+<li>存在feat提交： 需要更新minor版本</li>
+<li>存在fix提交： 需要更新patch版本</li>
+<li>存在BREAKING CHANGE提交： 需要更新大版本</li>
+</ul>
+<h3 id="lerna-publish"><a href="#lerna-publish" class="headerlink" title="lerna publish"></a>lerna publish</h3><p>发布需要发布的包，此命令可以既包含<code>lerna version</code>的工作，也可以单纯的只做发布操作。</p>
+<p>根据不同的管理模式行为会不太一样。参考<code>管理模式</code>章节。<br><strong>注意：</strong> 不会发布标记为私有（<code>package.json</code>中<code>private=true</code>）的包。</p>
+<h4 id="lerna-publish-1"><a href="#lerna-publish-1" class="headerlink" title="lerna publish"></a><code>lerna publish</code></h4><p>发布自上次发布以来有更新的包，包含了<code>lerna version</code>的工作。</p>
+<h4 id="lerna-publish-from-git"><a href="#lerna-publish-from-git" class="headerlink" title="lerna publish from-git"></a><code>lerna publish from-git</code></h4><p>显示发布当前提交中标记的包，类似于先独立执行<code>lerna version</code>后，再执行此命令进行发布。</p>
+<h4 id="lerna-publish-from-package"><a href="#lerna-publish-from-package" class="headerlink" title="lerna publish from-package"></a><code>lerna publish from-package</code></h4><p>显示发布npm registry中不存在的最新版本的包。</p>
+<h2 id="其他事项"><a href="#其他事项" class="headerlink" title="其他事项"></a>其他事项</h2><h3 id="以-开头包的发布问题"><a href="#以-开头包的发布问题" class="headerlink" title="以@开头包的发布问题"></a>以@开头包的发布问题</h3><p>发布package的名字如果是以@开头的，例如<code>@feu/tools</code>，npm默认以为是私人发布，需要使用<code>npm publish --access public</code>发布。但是<code>lerna publish</code>不支持该参数，解决方法参考: <a href="https://github.com/lerna/lerna/issues/914" target="_blank" rel="noopener">issues</a></p>
+<p>方案参考：<br><figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">// package.json</span><br><span class="line">&#123;</span><br><span class="line"> <span class="attr">"name"</span>: <span class="string">"@feu/tools"</span>,</span><br><span class="line"> <span class="attr">"publishConfig"</span>: &#123;</span><br><span class="line">   <span class="attr">"access"</span>: <span class="string">"publish"</span> 	// 如果该模块需要发布，对于scope模块，需要设置为publish，否则需要权限验证</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="lerna发布失败后的解决方案"><a href="#lerna发布失败后的解决方案" class="headerlink" title="lerna发布失败后的解决方案"></a>lerna发布失败后的解决方案</h3><p>你可以在你这次失败之后使用<code>lerna publish from-git</code>从上次版本迭代的结果开始发布。<br>参考：<a href="https://github.com/huruji/blog/issues/67" target="_blank" rel="noopener">https://github.com/huruji/blog/issues/67</a></p>
+<h3 id="配置使用yarn-useWorkspaces"><a href="#配置使用yarn-useWorkspaces" class="headerlink" title="配置使用yarn useWorkspaces"></a>配置使用yarn useWorkspaces</h3><p>命令：<code>lerna bootstrap --npm-client yarn --use-workspaces</code><br>或者<code>lerna.json</code>里配置：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// lerna.json</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="string">"packages"</span>: [<span class="string">"packages/*"</span>], <span class="comment">// 配置package目录</span></span><br><span class="line">  <span class="string">"npmClient"</span>: <span class="string">"yarn"</span>,</span><br><span class="line">  <span class="string">"useWorkspaces"</span>: <span class="literal">true</span> <span class="comment">// 使用yarn workspaces</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="按拓扑排序执行命令"><a href="#按拓扑排序执行命令" class="headerlink" title="按拓扑排序执行命令"></a>按拓扑排序执行命令</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ lerna run --stream --sort build</span><br></pre></td></tr></table></figure>
+<h3 id="Conventional-Commits支持"><a href="#Conventional-Commits支持" class="headerlink" title="Conventional Commits支持"></a>Conventional Commits支持</h3><p>lerna的<code>lerna version</code>和changelog生成都依赖于Conventional Commits。需要保证commit msg符合规范。  </p>
+<p>相关文档：</p>
+<ul>
+<li><a href="https://www.conventionalcommits.org/en/v1.0.0/" target="_blank" rel="noopener">https://www.conventionalcommits.org/en/v1.0.0/</a></li>
+<li><a href="https://juejin.im/post/5d0b3f8c6fb9a07ec07fc5d0" target="_blank" rel="noopener">https://juejin.im/post/5d0b3f8c6fb9a07ec07fc5d0</a></li>
+</ul>
+<h2 id="演示项目"><a href="#演示项目" class="headerlink" title="演示项目"></a>演示项目</h2><p><a href="https://github.com/txiejun/lerna-usage" target="_blank" rel="noopener">演示项目下载地址</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>喜欢你就打赏一下</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechat1.png" alt="txiejun 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/alipay.png" alt="txiejun 支付宝"/>
+        <p>支付宝</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/web/" rel="tag"># web</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/04/23/html/" rel="next" title="HTML知识点总结">
+                <i class="fa fa-chevron-left"></i> HTML知识点总结
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+    </div>
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/txiejun.png"
+                alt="txiejun" />
+            
+              <p class="site-author-name" itemprop="name">txiejun</p>
+              <p class="site-description motion-element" itemprop="description">关注大前端，游戏研发</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">10</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/txiejun" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:txiejun@126.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://me.csdn.net/txiejun" target="_blank" title="CSDN">
+                      
+                        <i class="fa fa-fw fa-skype"></i>CSDN</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#背景"><span class="nav-number">1.</span> <span class="nav-text">背景</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#lerna"><span class="nav-number">2.</span> <span class="nav-text">lerna</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#管理模式"><span class="nav-number">3.</span> <span class="nav-text">管理模式</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#固定-锁定模式（默认）"><span class="nav-number">3.1.</span> <span class="nav-text">固定/锁定模式（默认）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#独立模式"><span class="nav-number">3.2.</span> <span class="nav-text">独立模式</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#lerna-json"><span class="nav-number">4.</span> <span class="nav-text">lerna.json</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#使用"><span class="nav-number">5.</span> <span class="nav-text">使用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1、全局安装lerna"><span class="nav-number">5.1.</span> <span class="nav-text">1、全局安装lerna</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2、使用git-init初始化一个项目仓库"><span class="nav-number">5.2.</span> <span class="nav-text">2、使用git init初始化一个项目仓库</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3、执行lerna初始化"><span class="nav-number">5.3.</span> <span class="nav-text">3、执行lerna初始化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4、创建三个新的package-feu-app、feu-ui、feu-tools"><span class="nav-number">5.4.</span> <span class="nav-text">4、创建三个新的package (feu-app、feu-ui、feu-tools)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5、添加依赖并编码"><span class="nav-number">5.5.</span> <span class="nav-text">5、添加依赖并编码</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#feu-tools"><span class="nav-number">5.5.1.</span> <span class="nav-text">feu-tools</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#feu-ui"><span class="nav-number">5.5.2.</span> <span class="nav-text">feu-ui</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#feu-app"><span class="nav-number">5.5.3.</span> <span class="nav-text">feu-app</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6、运行效果"><span class="nav-number">5.6.</span> <span class="nav-text">6、运行效果</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#发布到npm"><span class="nav-number">6.</span> <span class="nav-text">发布到npm</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#前置条件"><span class="nav-number">6.1.</span> <span class="nav-text">前置条件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#执行发布命令"><span class="nav-number">6.2.</span> <span class="nav-text">执行发布命令</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#执行结果"><span class="nav-number">6.3.</span> <span class="nav-text">执行结果</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#常用命令"><span class="nav-number">7.</span> <span class="nav-text">常用命令</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#lerna-init"><span class="nav-number">7.1.</span> <span class="nav-text">lerna init</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#lerna-bootstrap"><span class="nav-number">7.2.</span> <span class="nav-text">lerna bootstrap</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#lerna-import"><span class="nav-number">7.3.</span> <span class="nav-text">lerna import</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#lerna-add"><span class="nav-number">7.4.</span> <span class="nav-text">lerna add</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#lerna-create"><span class="nav-number">7.5.</span> <span class="nav-text">lerna create</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#lerna-clean"><span class="nav-number">7.6.</span> <span class="nav-text">lerna clean</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#lerna-ls"><span class="nav-number">7.7.</span> <span class="nav-text">lerna ls</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#lerna-changed"><span class="nav-number">7.8.</span> <span class="nav-text">lerna changed</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#lerna-diff"><span class="nav-number">7.9.</span> <span class="nav-text">lerna diff</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#lerna-run"><span class="nav-number">7.10.</span> <span class="nav-text">lerna run</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#lerna-exec"><span class="nav-number">7.11.</span> <span class="nav-text">lerna exec</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#lerna-link"><span class="nav-number">7.12.</span> <span class="nav-text">lerna link</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#lerna-version"><span class="nav-number">7.13.</span> <span class="nav-text">lerna version</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#lerna-publish"><span class="nav-number">7.14.</span> <span class="nav-text">lerna publish</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#lerna-publish-1"><span class="nav-number">7.14.1.</span> <span class="nav-text">lerna publish</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#lerna-publish-from-git"><span class="nav-number">7.14.2.</span> <span class="nav-text">lerna publish from-git</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#lerna-publish-from-package"><span class="nav-number">7.14.3.</span> <span class="nav-text">lerna publish from-package</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#其他事项"><span class="nav-number">8.</span> <span class="nav-text">其他事项</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#以-开头包的发布问题"><span class="nav-number">8.1.</span> <span class="nav-text">以@开头包的发布问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#lerna发布失败后的解决方案"><span class="nav-number">8.2.</span> <span class="nav-text">lerna发布失败后的解决方案</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#配置使用yarn-useWorkspaces"><span class="nav-number">8.3.</span> <span class="nav-text">配置使用yarn useWorkspaces</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#按拓扑排序执行命令"><span class="nav-number">8.4.</span> <span class="nav-text">按拓扑排序执行命令</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Conventional-Commits支持"><span class="nav-number">8.5.</span> <span class="nav-text">Conventional Commits支持</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#演示项目"><span class="nav-number">9.</span> <span class="nav-text">演示项目</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
+          
+        </div>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2018 &mdash; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Txiejun. All rights reserved.</span>
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+  
+  <script type="text/javascript">
+    var GUEST = ['nick','mail','link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item=>{
+      return GUEST.indexOf(item)>-1;
+    });
+    new Valine({
+        el: '#comments' ,
+        verify: false,
+        notify: false,
+        appId: '3GOT2eV5cwQIIl8OSJj6W59M-gzGzoHsz',
+        appKey: 'c0nqnWBfdPV0nL6Qtdrs8UfL',
+        placeholder: '我有话要说',
+        avatar:'mm',
+        guest_info:guest,
+        pageSize:'10' || 10,
+    });
+  </script>
+
+
+
+  
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("3GOT2eV5cwQIIl8OSJj6W59M-gzGzoHsz", "c0nqnWBfdPV0nL6Qtdrs8UfL");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
